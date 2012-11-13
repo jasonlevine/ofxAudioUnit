@@ -242,9 +242,35 @@ class ofxAudioUnitSampler : public ofxAudioUnit
 	
 public:
 	ofxAudioUnitSampler();
-	
+	ofxAudioUnitSampler(AudioComponentDescription description);
+    ofxAudioUnitSampler(OSType type,
+                        OSType subType,
+                        OSType manufacturer = kAudioUnitManufacturer_Apple);
+    ofxAudioUnitSampler(const ofxAudioUnitSampler &orig);
+    ofxAudioUnitSampler& operator=(const ofxAudioUnitSampler &orig);
+    
 	bool setSample(const std::string &samplePath);
 	bool setSamples(const std::vector<std::string> &samplePaths);
+    
+    void midiEvent(const UInt32 status, const UInt32 data1, const UInt32 data2);
+    void setBank(const UInt32 msb, const UInt32 lsb);
+    void setProgram(const UInt32 prog);
+    void setChannel(const UInt32 chan) { midiChannelInUse = chan; };
+    void midiNoteOn(const UInt32 note, const UInt32 vel);
+    void midiNoteOff(const UInt32 note, const UInt32 vel);
+    void setVolume(float volume);
+    
+    UInt32 midiChannelInUse;
+    
+    enum {
+        kMidiMessage_ControlChange      = 0xB,
+        kMidiMessage_ProgramChange      = 0xC,
+        kMidiMessage_BankMSBControl     = 0,
+        kMidiMessage_BankLSBControl     = 32,
+        kMidiMessage_NoteOn             = 0x9,
+        kMidiMessage_NoteOff            = 0x8
+    };
+
 };
 
 #pragma mark - ofxAudioUnitTap
